@@ -19,7 +19,7 @@ app.post("/api/shorten", (req, res) => {
     return res.status(400).json({ error: "URL is required" });
   }
 
-  const validDomains = ["sizzlent.com", "szl.my"];
+  const validDomains = ["quickhost.click"];
   if (!validDomains.includes(domain)) {
     return res.status(400).json({ error: "invalid domain selected" });
   }
@@ -40,7 +40,7 @@ app.get("/:alias", (req, res) => {
   if (longUrl) {
     res.redirect(longUrl);
   } else {
-    res.status(404).send("ts was NOT found 😭🙏");
+    res.status(404).send("this is not a real/working link");
   }
 });
 
