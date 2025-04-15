@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sizzlent</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <main>
+        <div id="particles-js"></div>
+        <h1>sizzlent</h1> 
+        <p>quickly shorten your long ass link</p> <br>
+        <select name="domain" id="domain">
+            <option value="sizzlent.com">sizzlent.com</option>
+            <option value="szl.my">szl.my</option>
+        </select>
+        <label>/</label>
+        <input type="text" id="ogrizz" placeholder="alias"> <br> <br>
+        <input type="url" id="long-url" placeholder="long link here (include https)">
+        <button type="submit" id="rizz">generate</button> 
+    </main>
+
+    <script src="particles.js"></script>
+    <script src="partigoon.js"></script>
+    <script>
+      document.getElementById("rizz").addEventListener("click", function() {
+        const alias = document.getElementById("ogrizz").value.trim();
+        const longUrl = document.getElementById("long-url").value.trim();
+
+        if (!longUrl) {
+          alert("please use a working link");
+          return;
+        }
+
+        const domain = document.getElementById("domain").value;
+        const urlData = { alias, longUrl, domain };
+
+        fetch(`/api/shorten`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(urlData)
+        })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              if (data.error && data.error.includes("alias already taken")) {
+                alert("alias already taken, please choose another one");
+              } else {
+                alert("Error: " + data.error);
+              }
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.shortUrl) {
+            alert("link generated! it should now be copied to your clipboard");
+            copyToClipboard(data.shortUrl);
+          }
+        })
+        .catch(error => {
+          alert("Error: " + error.message);
+        });
+      });
+
+      function copyToClipboard(text) {
+        const tempInput = document.createElement("input");
+        document.body.appendChild(tempInput);
+        tempInput.value = text;
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+      }
+    </script>
+    <script src="script.js" defer></script>
+  </body>
+</html>
